@@ -73,5 +73,11 @@ Plugins/*/Intermediate/*
 # Cache files for the editor to use
 DerivedDataCache/*
 
+#GitLFS
+Content/Assets**
+Content/Maps**
+Content/__ExternalActors__** 
+Content/__ExternalObjects__** 
+
 #StarterContent
 Content/StarterContent/**
