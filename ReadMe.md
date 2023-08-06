@@ -23,6 +23,7 @@ git lfs track "Content/__ExternalActors__**"
 git lfs track "Content/__ExternalObjects__**"
 git checkout -b main
 git pull https://github.com/YevhenHoina/FussyFox main
+git pull lfs https://github.com/YevhenHoina/FussyFox main
 ```
 ## Auto install
 
@@ -34,6 +35,8 @@ cd C:\Users\USERNAME\Documents\Unreal Projects
 2. Clone the repository under the FussyFox folder
 ```console
 git clone https://github.com/YevhenHoina/FussyFox FussyFox
+git clone lfs https://github.com/YevhenHoina/FussyFox FussyFox
+
 ```
 
 
