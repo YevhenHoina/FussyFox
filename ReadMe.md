@@ -4,6 +4,7 @@ To install this shit, you need to setup yout git repository correctly
 
 Firstly download Git LFS here -> https://git-lfs.com
 
+## Manual installation
 
 1. Navigate to your Unreal project folder
 E. g.:
@@ -26,4 +27,7 @@ git pull https://github.com/YevhenHoina/FussyFox main
 git pull lfs https://github.com/YevhenHoina/FussyFox main
 ```
 
-
+## Auto instalation
+```console
+git clone https://github.com/YevhenHoina/FussyFox FussyFox
+```
