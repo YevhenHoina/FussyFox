@@ -19,6 +19,8 @@ git lfs install
 ```Console
 git lfs track "Content/Assets**"
 git lfs track "Content/Maps**"
+git lfs track "Content/__ExternalActors__**"
+git lfs track "Content/__ExternalObjects__**"
 git checkout -b main
 git pull https://github.com/YevhenHoina/FussyFox main
 ```
