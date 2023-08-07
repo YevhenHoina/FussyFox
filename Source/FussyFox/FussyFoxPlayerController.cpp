@@ -3,6 +3,7 @@
 #include "FussyFoxPlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "FussyFoxCharacter.h"
@@ -15,7 +16,6 @@ AFussyFoxPlayerController::AFussyFoxPlayerController()
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
 	CachedDestination = FVector::ZeroVector;
-	FollowTime = 0.f;
 }
 
 void AFussyFoxPlayerController::BeginPlay()
@@ -38,6 +38,11 @@ void AFussyFoxPlayerController::SetupInputComponent()
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
+		//Moving
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AFussyFoxPlayerController::OnJoystickInput);
+
+
+		/*
 		// Setup mouse input events
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Started, this, &AFussyFoxPlayerController::OnInputStarted);
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &AFussyFoxPlayerController::OnSetDestinationTriggered);
@@ -49,7 +54,10 @@ void AFussyFoxPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &AFussyFoxPlayerController::OnTouchTriggered);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &AFussyFoxPlayerController::OnTouchReleased);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AFussyFoxPlayerController::OnTouchReleased);
+		*/	
 	}
+
+	
 }
 
 void AFussyFoxPlayerController::OnInputStarted()
@@ -57,7 +65,20 @@ void AFussyFoxPlayerController::OnInputStarted()
 	StopMovement();
 }
 
+void AFussyFoxPlayerController::OnJoystickInput(const FInputActionValue& Value)
+{
+	FVector2D MovementVector = Value.Get<FVector2D>();
+	APawn* ControlledPawn = GetPawn();
+	
+
+	if (ControlledPawn != nullptr)
+	{		
+		FVector WorldDirection = FVector(MovementVector.X, MovementVector.Y, 0);
+		ControlledPawn->AddMovementInput(WorldDirection, 1.0, false);
+	}
+}
 // Triggered every frame when the input is held down
+/*
 void AFussyFoxPlayerController::OnSetDestinationTriggered()
 {
 	// We flag that the input is being pressed
@@ -89,18 +110,12 @@ void AFussyFoxPlayerController::OnSetDestinationTriggered()
 		ControlledPawn->AddMovementInput(WorldDirection, 1.0, false);
 	}
 }
+*/
 
+/*
 void AFussyFoxPlayerController::OnSetDestinationReleased()
 {
-	// If it was a short press
-	if (FollowTime <= ShortPressThreshold)
-	{
-		// We move there and spawn some particles
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
-	}
-
-	FollowTime = 0.f;
+	
 }
 
 // Triggered every frame when the input is held down
@@ -115,3 +130,4 @@ void AFussyFoxPlayerController::OnTouchReleased()
 	bIsTouch = false;
 	OnSetDestinationReleased();
 }
+*/
