@@ -19,10 +19,16 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+<<<<<<< HEAD
+=======
+	UPROPERTY(EditAnyWhere)
+		UStaticMeshComponent* InitialMeshComponent;
+>>>>>>> main
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
+<<<<<<< HEAD
 	/*
 	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight prospect road")))
 	UPROPERTY(EditAnyWhere)
@@ -44,6 +50,9 @@ public:
 	UPROPERTY(EditAnyWhere)
 	UStaticMeshComponent* prospect_crossing;*/
 
+=======
+	
+>>>>>>> main
 	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight prospect road")))
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 		UStaticMesh* prospect_straight;
@@ -67,6 +76,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	UStaticMesh* prospect_end;
 
+<<<<<<< HEAD
 	UStaticMesh* Prospects[6] =
 	{
 		prospect_straight,
@@ -77,4 +87,12 @@ public:
 		prospect_end,
 	};
 	void SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck);
+=======
+	UStaticMesh* Prospects[6];
+	void SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck);
+	int getRandomNumber();
+	void GenerateRoad(FVector Roadposition, double GenerationStage, FVector RoadDirection);
+
+
+>>>>>>> main
 };
