@@ -76,5 +76,5 @@ public:
 		prospect_crossing,
 		prospect_end,
 	};
-	void MESH_NOT_FOUND_ERROR(FString AssetPath, UStaticMesh* MeshToCheck);
+	void SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck);
 };
