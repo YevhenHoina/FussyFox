@@ -54,7 +54,7 @@ void ARoad::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GenerateRoad(FVector(0,0,0), 4, FVector(1, 0 , 0));
+	GenerateRoad(FVector(0,0,0), 20, FVector(1, 0 , 0));
 }
 
 // Called every frame
@@ -79,62 +79,73 @@ void ARoad::SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck)
 }
 
 int ARoad::getRandomNumber() {
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> dis(0, 1);
+	int RandomNum = rand() % 100;
 
-	double randNum = dis(gen);
-
-	if (randNum <= 0.8)
-		return 1;
-	else if (randNum <= 0.9)
-		return 2;
-	else if (randNum <= 0.95)
-		return 3;
-	else if (randNum <= 0.99)
-		return 4;
-	else if (randNum <= 0.993)
-		return 5;
-	else
-		return 6;
+	if (RandomNum <= 50) return 0;
+	if (RandomNum >= 50 && RandomNum < 65) return 1;
+	if (RandomNum >= 65 && RandomNum < 80) return 2;
+	if (RandomNum >= 80 && RandomNum < 89) return 3;
+	if (RandomNum >= 89 && RandomNum < 99) return 4;
+	return 5;
 }
 
 void ARoad::GenerateRoad(FVector Roadposition, double GenerationStage, FVector RoadDirection)
-{
-	int randomNum = 4;
+{	
+	double rotated = 1;
+	FVector CurrentPosition;
+	int randomNum = 0;
 	float iteration = 0;
 	for (double i = 0; i <= GenerationStage; i ++)
 	{
+
+		CurrentPosition = (1000 * i) * RoadDirection + Roadposition;
 		UStaticMeshComponent* NewRoadComponent = NewObject<UStaticMeshComponent>(this);
-		NewRoadComponent->SetStaticMesh(Prospects[randomNum]);
-		NewRoadComponent->SetWorldLocation((1000 * i) * RoadDirection + Roadposition);
+		NewRoadComponent->SetStaticMesh(Prospects[getRandomNumber()]);
+		NewRoadComponent->SetRelativeLocation(CurrentPosition);
+		UE_LOG(LogTemp, Warning, TEXT("Pane created X: %f, Y: %f, Z: %f"), CurrentPosition.X, CurrentPosition.Y, CurrentPosition.Z);
 		NewRoadComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 		NewRoadComponent->RegisterComponent();
+
+		if (randomNum == 0) randomNum = getRandomNumber();
 
 		if ((randomNum == 1) || (randomNum == 4)) {
 			GenerateRoad(
 				(1000 * i) * RoadDirection + Roadposition,
 				GenerationStage - 1,
-				FVector(0, 1, 0)
+				FVector(0, 1, 0) * rotated
 				);
+			randomNum = 0;
+			rotated *= -1;
 		}
 
 		if ((randomNum == 2) || (randomNum == 4)) {
 			GenerateRoad(
 				(1000 * i) * RoadDirection + Roadposition,
 				GenerationStage - 1,
-				FVector(0, -1, 0)
+				FVector(0, -1, 0) * rotated
 			);
+			randomNum = 0;
+			rotated *= -1;
 		}
 
 		if (randomNum == 3) {
 			GenerateRoad(
 				(1000 * i) * RoadDirection + Roadposition,
 				GenerationStage - 1,
-				FVector(0, -1, 0)
+				FVector(0, -1, 0) * rotated
+			);
+			GenerateRoad(
+				(1000 * i) * RoadDirection + Roadposition,
+				GenerationStage - 1,
+				FVector(0, 1, 0) * rotated
 			);
 			GenerationStage = 0;
+			randomNum = 0;
+			rotated *= -1;
 		}
+		if (randomNum == 5) GenerationStage = 0;
+		
+		GenerationStage--;
 	}
 	
 }
