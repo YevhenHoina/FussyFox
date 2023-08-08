@@ -9,13 +9,26 @@ ARoad::ARoad()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	FString DefaultMeshAssetPath = TEXT("/Game/Content/Assets/LevelGeneration/");
-	UStaticMesh* DefaultMeshAsset = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *DefaultMeshAssetPath));
+	FString DefaultMeshAssetPath = TEXT("/Script/Engine.StaticMesh'/Game/Assets/LevelGeneration/prospect_crossing.prospect_straight'");
+	prospect_straight = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *DefaultMeshAssetPath));
+	MESH_NOT_FOUND_ERROR(DefaultMeshAssetPath, prospect_straight);
 
-	if (!DefaultMeshAsset)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load the default mesh asset: %s"), *DefaultMeshAssetPath);
-	}
+		DefaultMeshAssetPath = TEXT("/Script/Engine.StaticMesh'/Game/Assets/LevelGeneration/prospect_crossing.prospect_right'");
+	prospect_right = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *DefaultMeshAssetPath));
+	MESH_NOT_FOUND_ERROR(DefaultMeshAssetPath, prospect_right);
+
+		DefaultMeshAssetPath = TEXT("/Script/Engine.StaticMesh'/Game/Assets/LevelGeneration/prospect_crossing.prospect_left'");
+	prospect_left = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *DefaultMeshAssetPath));
+	MESH_NOT_FOUND_ERROR(DefaultMeshAssetPath, prospect_left);
+
+		DefaultMeshAssetPath = TEXT("/Script/Engine.StaticMesh'/Game/Assets/LevelGeneration/prospect_crossing.prospect_left_adn_right'");
+	prospect_left_right = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *DefaultMeshAssetPath));
+	MESH_NOT_FOUND_ERROR(DefaultMeshAssetPath, prospect_left_right);
+
+		DefaultMeshAssetPath = TEXT("/Script/Engine.StaticMesh'/Game/Assets/LevelGeneration/prospect_crossing.prospect_crossing'");
+	MESH_NOT_FOUND_ERROR(DefaultMeshAssetPath, prospect_crossing);
+
+	
 }
 
 // Called when the game starts or when spawned
@@ -32,3 +45,12 @@ void ARoad::Tick(float DeltaTime)
 
 }
 
+
+
+void ARoad::MESH_NOT_FOUND_ERROR(FString AssetPath, UStaticMesh* MeshToCheck)
+{
+	if (!MeshToCheck)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load the default mesh asset: %s"), *AssetPath);
+	}
+}

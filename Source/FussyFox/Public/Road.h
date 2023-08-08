@@ -22,6 +22,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
 	/*
 	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight prospect road")))
 	UPROPERTY(EditAnyWhere)
@@ -66,8 +67,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 	UStaticMesh* prospect_end;
 
-	//UPROPERTY(VisibleAnyWhere)
-	UStaticMesh* Roads[6] =
+	UStaticMesh* Prospects[6] =
 	{
 		prospect_straight,
 		prospect_right,
@@ -76,5 +76,5 @@ public:
 		prospect_crossing,
 		prospect_end,
 	};
-
+	void MESH_NOT_FOUND_ERROR(FString AssetPath, UStaticMesh* MeshToCheck);
 };
