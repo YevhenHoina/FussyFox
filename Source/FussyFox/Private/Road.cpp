@@ -2,12 +2,12 @@
 
 
 #include "Road.h"
-<<<<<<< HEAD
-=======
+ 
+ 
 #include <random>
 #include "Engine/StaticMesh.h"
 #include "Components/StaticMeshComponent.h"
->>>>>>> main
+ 
 
 // Sets default values
 ARoad::ARoad()
@@ -38,9 +38,9 @@ ARoad::ARoad()
 	DefaultMeshAssetPath = TEXT("/Script/Engine.StaticMesh'/Game/Assets/LevelGeneration/prospect_end.prospect_end'");
 	prospect_end = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *DefaultMeshAssetPath));
 	SetDefaultMesh(DefaultMeshAssetPath, prospect_end);
-<<<<<<< HEAD
+ 
 	
-=======
+ 
 
 	Prospects[0] = prospect_straight;
 	Prospects[1] = prospect_right;
@@ -53,7 +53,7 @@ ARoad::ARoad()
 	InitialMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Start crossing"));
 	InitialMeshComponent->SetupAttachment(RootComponent);
 
->>>>>>> main
+ 
 }
 
 // Called when the game starts or when spawned
@@ -61,10 +61,10 @@ void ARoad::BeginPlay()
 {
 	Super::BeginPlay();
 	
-<<<<<<< HEAD
-=======
-	GenerateRoad(FVector(0,0,0), 20, FVector(1, 0 , 0));
->>>>>>> main
+ 
+ 
+	GenerateRoad(FVector(0,0,0), 10, FVector(1, 0 , 0));
+ 
 }
 
 // Called every frame
@@ -87,8 +87,8 @@ void ARoad::SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck)
 		UE_LOG(LogTemp, Error, TEXT("Failed to load the default mesh asset: %s"), *AssetPath);
 	}
 }
-<<<<<<< HEAD
-=======
+ 
+ 
 
 int ARoad::getRandomNumber() {
 	int RandomNum = rand() % 100;
@@ -107,7 +107,7 @@ void ARoad::GenerateRoad(FVector Roadposition, double GenerationStage, FVector R
 	FVector CurrentPosition;
 	int randomNum = 0;
 	float iteration = 0;
-	for (double i = 0; i <= GenerationStage; i ++)
+	for (double i = 0; 0 <= GenerationStage; i++)
 	{
 
 		CurrentPosition = (1000 * i) * RoadDirection + Roadposition;
@@ -161,4 +161,4 @@ void ARoad::GenerateRoad(FVector Roadposition, double GenerationStage, FVector R
 	}
 	
 }
->>>>>>> main
+ 
