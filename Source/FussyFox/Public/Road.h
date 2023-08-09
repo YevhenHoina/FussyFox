@@ -54,31 +54,10 @@ public:
 
 	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight prospect road")))
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-		UStaticMesh* prospect_straight;
-
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("Turn tight prospect road")))
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-		UStaticMesh* prospect_right;
-
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("Trun left prospect road")))
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-		UStaticMesh* prospect_left;
-
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("T-crossing prospect road")))
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-		UStaticMesh* prospect_left_right;
-
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("X-crossing prospect road")))
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-		UStaticMesh* prospect_crossing;
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("End of prospect road")))
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-	UStaticMesh* prospect_end;
-
-
-	
+		UStaticMesh* PaneTile;	
 
 	UStaticMesh* Prospects[6];
+	UStaticMeshComponent* Chunks[10][10];
 	void SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck);
 	int getRandomNumber();
 	void GenerateRoad(FVector Roadposition, double GenerationStage, FVector RoadDirection);
