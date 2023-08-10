@@ -28,40 +28,42 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
+	UPROPERTY(EditAnywhere, Category = "Generation")
+		int Size = 20;
+	
+	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight road")))
+	UPROPERTY(EditAnyWhere, Category="Roads")
+		UMaterialInterface* road_straight;
 
-	/*
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight prospect road")))
-	UPROPERTY(EditAnyWhere)
-	UStaticMeshComponent* prospect_straight;
+	//UPROPERTY(EditAnywhere, Meta = (TEXT("Turn tight road")))
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* road_right;
 
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("Turn tight prospect road")))
-	UPROPERTY(EditAnyWhere)
-	UStaticMeshComponent* prospect_right;
+	//UPROPERTY(EditAnywhere, Meta = (TEXT("Trun left road")))
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* road_left;
 
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("Trun left prospect road")))
-	UPROPERTY(EditAnyWhere)
-	UStaticMeshComponent* prospect_left;
+	//UPROPERTY(EditAnywhere, Meta = (TEXT("T-crossing road")))
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* road_left_right;
 
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("T-crossing prospect road")))
-	UPROPERTY(EditAnyWhere)
-	UStaticMeshComponent* prospect_left_right;
+	//UPROPERTY(EditAnywhere, Meta = (TEXT("X-crossing road")))
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* road_crossing;
 
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("X-crossing prospect road")))
-	UPROPERTY(EditAnyWhere)
-	UStaticMeshComponent* prospect_crossing;*/
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* road_end;
 
-
-
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight prospect road")))
+	
+	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight road")))
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 		UStaticMesh* PaneTile;	
 
-	UStaticMesh* Prospects[6];
-	UStaticMeshComponent* Chunks[10][10];
+
+	UStaticMeshComponent* Chunks[20][20];
 	void SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck);
 	int getRandomNumber();
-	void GenerateRoad(FVector Roadposition, double GenerationStage, FVector RoadDirection);
-
-
-
+	void GenerateSurface(FVector Roadposition, double GenerationStage, FVector RoadDirection);
+	void GenerateRoads();
+	void BuildLine(FVector2D FirstPoint, FVector2D SecondPoint);
 };
