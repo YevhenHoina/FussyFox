@@ -89,44 +89,34 @@ void ARoad::GenerateSurface()
 			
 		}
 	}
-	GenerateRandomRoads();
+	GenerateRoads();
 }
  
-void ARoad::GenerateRandomRoads()
+void ARoad::GenerateRoads()
 {
-	int offset = 5;
 	int X1 = 0, X2;
 	int Y1 = 0, Y2;
-	for (int i = 0; i <= 16; i ++)
+	for (int i = 0; i <= 8; i ++)
 	{
-		X1 = offset + 5 + rand() % 3, X2 = Size - (rand() % 3) - 2 - offset;
-		Y1 = offset + Y1 + 2 + rand() % 3, Y2 = Y1;
+		X1 = 2 + rand() % 3, X2 = Size - (rand() % 3) - 2;
+		Y1 = Y1 + 2 + rand() % 3, Y2 = Y1;
 		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
 
 
-		X1 += rand() % 6;
-		offset = 0;
+		X1 += rand() % 3;
 		if (X1 > 15) break;
 	}
-	offset = 5;
-	X1 = 0, X2 = 0;
-	Y1 = 0, Y2 = 0;
-	for (int i = 0; i <= 16; i++)
+	X1 = 0, X2;
+	Y1 = 0, Y2;
+	for (int i = 0; i <= 8; i++)
 	{
-		Y1 = offset + 5 + rand() % 3, Y2 = Size - (rand() % 3) - 2 - offset;
-		X1 = offset + X1 + 2 + rand() % 3, X2 = X1;
+		Y1 = 2 + rand() % 3, Y2 = Size - (rand() % 3) - 2;
+		X1 = X1 + 2 + rand() % 3, X2 = X1;
 		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
 
 		Y1 += rand() % 3;
-		offset = 0;
 		if (Y1 > 15) break;
 	}
-
-	offset = 5;
-	X1 = 0, X2 = 0;
-	Y1 = 0, Y2 = 0;
-
-
 }
 
 void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
@@ -284,7 +274,7 @@ void ARoad::FixCrossing()
 						break;
 					}
 				}
-				if (RoadConnections == 3) AccumulatedRotation *= -1;
+				
 				UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
 				ChunksState[i][j] = RoadConnections;
 				Chunks[i][j]->SetWorldRotation(FRotator(0.0f, AccumulatedRotation, 0.0f));
