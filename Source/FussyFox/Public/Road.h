@@ -28,44 +28,35 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-	UPROPERTY(EditAnywhere, Category = "Generation")
-		int Size = 40;
-	
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight road")))
-	UPROPERTY(EditAnyWhere, Category="Roads")
-		UMaterialInterface* road_straight;
-
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("Turn tight road")))
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* road_right;
-
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("Trun left road")))
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* road_turn;
-
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("T-crossing road")))
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* road_left_right;
-
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("X-crossing road")))
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* road_crossing;
-
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* road_end;
 
 	UPROPERTY(EditAnyWhere, Category = "Roads")
 		UMaterialInterface* grass;
 
 	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* road_end;
+
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* road_turn;
+
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* road_left_right;
+
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* road_crossing;
+
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* road_straight;
+
+
+
+	UPROPERTY(EditAnyWhere, Category = "Roads")
 		UMaterialInterface* ERROR_MATERIAL;
 
-	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight road")))
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 		UStaticMesh* PlaneTile;
 
 
-
+	int Size = 40;
 	UStaticMeshComponent* Chunks[40][40];
 	int ChunksState[40][40];
 
@@ -75,6 +66,6 @@ private:
 	void GenerateSurface();
 	void GenerateRoads();
 	void BuildLine(FVector2D FirstPoint, FVector2D SecondPoint);
-	UMaterialInterface* SetCrossing(int X, int Y, int StateWillingToPlacee, FVector2D Direction);
+	void FixCrossing();
 	UMaterialInterface* GetPlaneMaterial(int id_material);
 };

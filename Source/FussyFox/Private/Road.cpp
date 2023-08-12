@@ -28,7 +28,8 @@ void ARoad::BeginPlay()
  
  
 	GenerateSurface();
- 
+	FixCrossing();
+	
 }
 
 // Called every frame
@@ -89,19 +90,18 @@ void ARoad::GenerateSurface()
 			
 		}
 	}
-	GenerateRoads();
+	GenerateRoads(270);
+	for (int i = 0; i < 20; i++)
+	{
+		for (int j = 0; j < 20; j++)
+		{
+			UE_LOG(LogTemp, Warning, (TEXT("Chenkstate at (%d, %d) is %d")), i, j, ChunksState[i][j]);
+		}
+	}
 }
  
-void ARoad::GenerateRoads()
+void ARoad::GenerateRoads(int RoadCount)
 {
-	
-	BuildLine(FVector2D(3, 1), FVector2D(3, 10));
-	BuildLine(FVector2D(5, 1), FVector2D(5, 9));
-	BuildLine(FVector2D(3, 4), FVector2D(13, 4));
-	BuildLine(FVector2D(11, 1), FVector2D(11, 11));
-	BuildLine(FVector2D(8, 1), FVector2D(8, 9));
-	BuildLine(FVector2D(3, 7), FVector2D(13, 7));
-	BuildLine(FVector2D(3, 9), FVector2D(13, 9));
 	
 }
 
@@ -122,19 +122,24 @@ void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
 		RightDirection = true;
 		Direction = FVector2D(0, 1);
 	}
-	if (FirstPoint.Y == SecondPoint.Y) {
+	else if (FirstPoint.Y == SecondPoint.Y) {
 		RightDirection = false;
 		Direction = FVector2D(1, 0);
 	}
-	else UE_LOG(LogTemp, Warning, TEXT("Not a staight line"));
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not a staight line"));
+		return;
+	}
+		
 
 	if (ChunksState[X1][Y1] == 0) {
 		Chunks[X1][Y1]->SetMaterial(0, road_end);
-		ChunksState[X1][Y1] = 6;
+		ChunksState[X1][Y1] = 1;
 	}
 	else {
 		Chunks[X1][Y1]->SetMaterial(0, road_crossing);
-		ChunksState[X1][Y1] = 5;
+		ChunksState[X1][Y1] = 4;
 	}
 	Chunks[X1][Y1]->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.0f, 0.0f, Direction.Y) * FVector(0, 0, 90) + FVector(0, 0, -90)));
 	FVector ResultVector = FVector(FirstPoint.X, FirstPoint.Y, 0) - FVector(SecondPoint.X, SecondPoint.Y, 0);
@@ -147,13 +152,13 @@ void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
 		if (ChunksState[X1][Y1] == 0)
 		{
 			Chunks[X1][Y1]->SetMaterial(0, road_straight);
-			ChunksState[X1][Y1] = 1;
+			ChunksState[X1][Y1] = 2;
 			
 		}
 		else
 		{
 			Chunks[X1][Y1]->SetMaterial(0, road_crossing);
-			ChunksState[X1][Y1] = 5;
+			ChunksState[X1][Y1] = 4;
 		}
 		Chunks[X1][Y1]->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.0f, 0.0f, Direction.Y) * FVector(0, 0, -90) + FVector(0, 0, -90)));
 	}
@@ -163,20 +168,104 @@ void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
 	if (ChunksState[X2][Y2] == 0) {
 		Chunks[X2][Y2]->SetMaterial(0, road_end);
 		Chunks[X2][Y2]->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.0f, 0.0f, Direction.Y) * FVector(0, 0, 90) + FVector(0, 0, 90)));
-		ChunksState[X2][Y2] = 6;
+		ChunksState[X2][Y2] = 1;
+	}
+	else {
+		Chunks[X2][Y2]->SetMaterial(0, road_crossing);
+		ChunksState[X2][Y2] = 4;
+		Chunks[X2][Y2]->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.0f, 0.0f, Direction.Y) * FVector(0, 0, 90) + FVector(0, 0, 90)));
 	}
 }
 
 UMaterialInterface* ARoad::GetPlaneMaterial(int id_material)
 {
 	if (id_material == 0) return grass;
-	if (id_material == 1) return road_straight;
-	if (id_material == 2) return road_right;
-	//if (id_material == 3) return road_left;
-	if (id_material == 4) return road_left_right;
-	if (id_material == 5) return road_crossing;
-	if (id_material == 6) return road_end;
+	if (id_material == 1) return road_end;
+	if (id_material == 2) return road_turn;
+	if (id_material == 3) return road_left_right;
+	if (id_material == 4) return road_crossing;
+	if (id_material == 5) return road_straight;
 	
 	return ERROR_MATERIAL;
 }
 
+void ARoad::FixCrossing()
+{
+	int RoadConnections;
+	float AccumulatedRotation;
+	for (int i = 0; i < Size; i++)
+	{
+		for (int j = 0; j < Size; j++)
+		{
+			if (ChunksState[i][j] == 4)
+			{
+				
+				RoadConnections = 0;
+				AccumulatedRotation = Chunks[i][j]->GetComponentToWorld().GetRotation().X;
+				UE_LOG(LogTemp, Warning, TEXT("RoadConections at (%d, %d)"), i, j);
+				for (int SideNum = 0; SideNum < 4; SideNum++)
+				{
+					switch (SideNum)
+					{
+					case 0:
+						if (i > 0 && ChunksState[i - 1][j] == 0)
+						{
+							UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
+						}
+						else
+						{
+							RoadConnections += 1;
+							UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
+						}
+						break;
+					case 1:
+						if (j > 0 && ChunksState[i][j - 1] == 0)
+						{
+							UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
+							AccumulatedRotation -= 90;
+						}
+						else
+						{
+							RoadConnections += 1;
+							UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
+						}
+						break;
+					case 2:
+						if (i < 20 && ChunksState[i + 1][j] == 0)
+						{
+							UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
+							AccumulatedRotation -= 90;
+						}
+						else
+						{
+							RoadConnections += 1;
+							UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
+
+						}
+						break;
+					case 3:
+						if (j < 20 && ChunksState[i][j + 1] == 0)
+						{
+							UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
+							AccumulatedRotation -= 90;
+						}
+						else
+						{
+							RoadConnections += 1;
+							UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
+						}
+						break;
+					default:
+						UE_LOG(LogTemp, Warning, TEXT("Error. FixCrossing function sucks"),);
+						break;
+					}
+				}
+				
+				UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
+				ChunksState[i][j] = RoadConnections;
+				Chunks[i][j]->SetWorldRotation(FRotator(0.0f, AccumulatedRotation, 0.0f));
+				Chunks[i][j]->SetMaterial(0, GetPlaneMaterial(ChunksState[i][j]));
+			}
+		}
+	}
+}
