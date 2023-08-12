@@ -64,7 +64,7 @@ private:
 	void SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck);
 	int getRandomNumber();
 	void GenerateSurface();
-	void GenerateRoads();
+	void GenerateRandomRoads();
 	void BuildLine(FVector2D FirstPoint, FVector2D SecondPoint);
 	void FixCrossing();
 	UMaterialInterface* GetPlaneMaterial(int id_material);

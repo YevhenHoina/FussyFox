@@ -99,12 +99,12 @@ void ARoad::GenerateRandomRoads()
 	int Y1 = 0, Y2;
 	for (int i = 0; i <= 16; i ++)
 	{
-		X1 = offset + 2 + rand() % 3, X2 = Size - (rand() % 3) - 2 - offset;
-		Y1 = Y1 + 2 + rand() % 3, Y2 = Y1;
+		X1 = offset + 5 + rand() % 3, X2 = Size - (rand() % 3) - 2 - offset;
+		Y1 = offset + Y1 + 2 + rand() % 3, Y2 = Y1;
 		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
 
 
-		X1 += rand() % 3;
+		X1 += rand() % 6;
 		offset = 0;
 		if (X1 > 15) break;
 	}
@@ -113,8 +113,8 @@ void ARoad::GenerateRandomRoads()
 	Y1 = 0, Y2 = 0;
 	for (int i = 0; i <= 16; i++)
 	{
-		Y1 = offset + 2 + rand() % 3, Y2 = Size - (rand() % 3) - 2 - offset;
-		X1 = X1 + 2 + rand() % 3, X2 = X1;
+		Y1 = offset + 5 + rand() % 3, Y2 = Size - (rand() % 3) - 2 - offset;
+		X1 = offset + X1 + 2 + rand() % 3, X2 = X1;
 		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
 
 		Y1 += rand() % 3;
