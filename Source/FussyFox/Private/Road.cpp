@@ -16,10 +16,8 @@ ARoad::ARoad()
 	PrimaryActorTick.bCanEverTick = true;
 
 	FString DefaultMeshAssetPath = TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Plane.Plane'");
-	PaneTile = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *DefaultMeshAssetPath));
-	SetDefaultMesh(DefaultMeshAssetPath, PaneTile);
- 
-	
+	PlaneTile = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *DefaultMeshAssetPath));
+	SetDefaultMesh(DefaultMeshAssetPath, PlaneTile);	
 }
 
 // Called when the game starts or when spawned
@@ -29,10 +27,7 @@ void ARoad::BeginPlay()
 	
  
  
-	GenerateSurface(FVector(0,0,0), 10, FVector(1, 0 , 0));
-	BuildLine(FVector2D(3, 1), FVector2D(3, 10));
-	BuildLine(FVector2D(5, 1), FVector2D(5, 10));
-	BuildLine(FVector2D(3, 4), FVector2D(13, 4));
+	GenerateSurface();
  
 }
 
@@ -70,7 +65,7 @@ int ARoad::getRandomNumber() {
 	return 5;
 }
 
-void ARoad::GenerateSurface(FVector Roadposition, double GenerationStage, FVector RoadDirection)
+void ARoad::GenerateSurface()
 {	
 	FVector CurrentPosition;
 
@@ -78,17 +73,19 @@ void ARoad::GenerateSurface(FVector Roadposition, double GenerationStage, FVecto
 	{
 		for (int j = 0; j < Size; j++)
 		{
-			CurrentPosition = FVector(i * 1000, j * 1000, 0);
+			CurrentPosition = FVector(i * 500, j * 500, 0);
 			UStaticMeshComponent* NewRoadComponent = NewObject<UStaticMeshComponent>(this);
-			NewRoadComponent->SetStaticMesh(PaneTile);
+			NewRoadComponent->SetStaticMesh(PlaneTile);
 			 
 			NewRoadComponent->SetRelativeLocation(CurrentPosition);
 			
 			NewRoadComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-			NewRoadComponent->SetWorldScale3D(FVector(10, 10, 1));
+			NewRoadComponent->SetWorldScale3D(FVector(5, 5, 1));
 			NewRoadComponent->RegisterComponent();
 			Chunks[i][j] = NewRoadComponent;
-			DrawDebugLine(GetWorld(), FVector(i * 1000 + 500, j * 1000 + 500, 0), FVector(i * 1000 + 500, j * 1000 + 500, 2000), FColor::Red, true, 100);
+			ChunksState[i][j] = 0;
+			NewRoadComponent->SetMaterial(0, GetPlaneMaterial(ChunksState[i][j]));
+			//DrawDebugLine(GetWorld(), FVector(i * 1000 + 500, j * 1000 + 500, 0), FVector(i * 1000 + 500, j * 1000 + 500, 2000), FColor::Red, true, 100);
 			
 		}
 	}
@@ -99,8 +96,12 @@ void ARoad::GenerateRoads()
 {
 	
 	BuildLine(FVector2D(3, 1), FVector2D(3, 10));
-	BuildLine(FVector2D(5, 1), FVector2D(5, 10));
+	BuildLine(FVector2D(5, 1), FVector2D(5, 9));
 	BuildLine(FVector2D(3, 4), FVector2D(13, 4));
+	BuildLine(FVector2D(11, 1), FVector2D(11, 11));
+	BuildLine(FVector2D(8, 1), FVector2D(8, 9));
+	BuildLine(FVector2D(3, 7), FVector2D(13, 7));
+	BuildLine(FVector2D(3, 9), FVector2D(13, 9));
 	
 }
 
@@ -111,39 +112,71 @@ void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
 	int	Y1 = FirstPoint.Y;
 	int	Y2 = SecondPoint.Y;
 
-	if (X1 == X2)
-	{
-		
-		Chunks[X1][Y1]->SetMaterial(0, road_end);
-		for (int i = 1; i < Y2; i++)
-		{
-			if (true) // (Chunks[X1][Y1 + i]->GetMaterial(0)->GetName() != "MI_Road_Straigh") //doesn't work
-			{
-				Chunks[X1][Y1 + i]->SetMaterial(0, road_straight);
-			}
-			else Chunks[X1][Y1 + i]->SetMaterial(0, road_crossing);
-		}
-		Chunks[X2][Y2]->SetMaterial(0, road_end);
-		Chunks[X2][Y2]->SetWorldRotation(FRotator(0, -180, 0));
+	FVector2D Direction;
+	FVector2D Position = FirstPoint;
+	bool RightDirection = true;
+
+	
+
+	if (FirstPoint.X == SecondPoint.X) {
+		RightDirection = true;
+		Direction = FVector2D(0, 1);
 	}
-	else if (Y1 == Y2)
-	{
-		Chunks[X1][Y1]->SetMaterial(0, road_end);
-		Chunks[X1][Y1]->SetWorldRotation(FRotator(0, -90, 0));
-		for (int i = 1; i < X2 - 3; i++)
-		{
-			if (true) // (Chunks[X1 + i][Y1]->GetMaterial(0)->GetName() != "MI_Road_Straigh") //doesn't work
-			{
-				Chunks[X1 + i][Y1]->SetMaterial(0, road_straight);
-				Chunks[X1 + i][Y1]->SetWorldRotation(FRotator(0, 90, 0));
-			}
-			else Chunks[X1 + i][Y1]->SetMaterial(0, road_crossing);
-			
-		}
-		Chunks[X2][Y2]->SetMaterial(0, road_end);
-		Chunks[X2][Y2]->SetWorldRotation(FRotator(0, 90, 0));
+	if (FirstPoint.Y == SecondPoint.Y) {
+		RightDirection = false;
+		Direction = FVector2D(1, 0);
 	}
 	else UE_LOG(LogTemp, Warning, TEXT("Not a staight line"));
 
+	if (ChunksState[X1][Y1] == 0) {
+		Chunks[X1][Y1]->SetMaterial(0, road_end);
+		ChunksState[X1][Y1] = 6;
+	}
+	else {
+		Chunks[X1][Y1]->SetMaterial(0, road_crossing);
+		ChunksState[X1][Y1] = 5;
+	}
+	Chunks[X1][Y1]->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.0f, 0.0f, Direction.Y) * FVector(0, 0, 90) + FVector(0, 0, -90)));
+	FVector ResultVector = FVector(FirstPoint.X, FirstPoint.Y, 0) - FVector(SecondPoint.X, SecondPoint.Y, 0);
+	for (int i = 1; i < ResultVector.Size(); i++)
+	{
+		X1 = Direction.X * i + Position.X;
+		Y1 = Direction.Y * i + Position.Y;
+		UE_LOG(LogTemp, Error, TEXT("ChunkState[%d][%d]: %d"), X1, Y1 + i, ChunksState[X1][Y1 + i]);
 
+		if (ChunksState[X1][Y1] == 0)
+		{
+			Chunks[X1][Y1]->SetMaterial(0, road_straight);
+			ChunksState[X1][Y1] = 1;
+			
+		}
+		else
+		{
+			Chunks[X1][Y1]->SetMaterial(0, road_crossing);
+			ChunksState[X1][Y1] = 5;
+		}
+		Chunks[X1][Y1]->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.0f, 0.0f, Direction.Y) * FVector(0, 0, -90) + FVector(0, 0, -90)));
+	}
+
+	
+
+	if (ChunksState[X2][Y2] == 0) {
+		Chunks[X2][Y2]->SetMaterial(0, road_end);
+		Chunks[X2][Y2]->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.0f, 0.0f, Direction.Y) * FVector(0, 0, 90) + FVector(0, 0, 90)));
+		ChunksState[X2][Y2] = 6;
+	}
 }
+
+UMaterialInterface* ARoad::GetPlaneMaterial(int id_material)
+{
+	if (id_material == 0) return grass;
+	if (id_material == 1) return road_straight;
+	if (id_material == 2) return road_right;
+	//if (id_material == 3) return road_left;
+	if (id_material == 4) return road_left_right;
+	if (id_material == 5) return road_crossing;
+	if (id_material == 6) return road_end;
+	
+	return ERROR_MATERIAL;
+}
+

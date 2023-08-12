@@ -29,7 +29,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	UPROPERTY(EditAnywhere, Category = "Generation")
-		int Size = 20;
+		int Size = 40;
 	
 	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight road")))
 	UPROPERTY(EditAnyWhere, Category="Roads")
@@ -41,7 +41,7 @@ public:
 
 	//UPROPERTY(EditAnywhere, Meta = (TEXT("Trun left road")))
 	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* road_left;
+		UMaterialInterface* road_turn;
 
 	//UPROPERTY(EditAnywhere, Meta = (TEXT("T-crossing road")))
 	UPROPERTY(EditAnyWhere, Category = "Roads")
@@ -54,16 +54,27 @@ public:
 	UPROPERTY(EditAnyWhere, Category = "Roads")
 		UMaterialInterface* road_end;
 
-	
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* grass;
+
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+		UMaterialInterface* ERROR_MATERIAL;
+
 	//UPROPERTY(EditAnywhere, Meta = (TEXT("Straight road")))
 	UPROPERTY(EditAnywhere, Category = "Mesh")
-		UStaticMesh* PaneTile;	
+		UStaticMesh* PlaneTile;
 
 
-	UStaticMeshComponent* Chunks[20][20];
+
+	UStaticMeshComponent* Chunks[40][40];
+	int ChunksState[40][40];
+
+private:
 	void SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck);
 	int getRandomNumber();
-	void GenerateSurface(FVector Roadposition, double GenerationStage, FVector RoadDirection);
+	void GenerateSurface();
 	void GenerateRoads();
 	void BuildLine(FVector2D FirstPoint, FVector2D SecondPoint);
+	UMaterialInterface* SetCrossing(int X, int Y, int StateWillingToPlacee, FVector2D Direction);
+	UMaterialInterface* GetPlaneMaterial(int id_material);
 };
