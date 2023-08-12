@@ -2,8 +2,7 @@
 
 
 #include "Road.h"
- 
- 
+#include "GenericPlatform/GenericPlatformMath.h"
 #include <random>
 #include "Engine/StaticMesh.h"
 #include "Components/StaticMeshComponent.h"
@@ -90,19 +89,44 @@ void ARoad::GenerateSurface()
 			
 		}
 	}
-	GenerateRoads(270);
-	for (int i = 0; i < 20; i++)
-	{
-		for (int j = 0; j < 20; j++)
-		{
-			UE_LOG(LogTemp, Warning, (TEXT("Chenkstate at (%d, %d) is %d")), i, j, ChunksState[i][j]);
-		}
-	}
+	GenerateRandomRoads();
 }
  
-void ARoad::GenerateRoads(int RoadCount)
+void ARoad::GenerateRandomRoads()
 {
-	
+	int offset = 5;
+	int X1 = 0, X2;
+	int Y1 = 0, Y2;
+	for (int i = 0; i <= 16; i ++)
+	{
+		X1 = offset + 2 + rand() % 3, X2 = Size - (rand() % 3) - 2 - offset;
+		Y1 = Y1 + 2 + rand() % 3, Y2 = Y1;
+		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
+
+
+		X1 += rand() % 3;
+		offset = 0;
+		if (X1 > 15) break;
+	}
+	offset = 5;
+	X1 = 0, X2 = 0;
+	Y1 = 0, Y2 = 0;
+	for (int i = 0; i <= 16; i++)
+	{
+		Y1 = offset + 2 + rand() % 3, Y2 = Size - (rand() % 3) - 2 - offset;
+		X1 = X1 + 2 + rand() % 3, X2 = X1;
+		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
+
+		Y1 += rand() % 3;
+		offset = 0;
+		if (Y1 > 15) break;
+	}
+
+	offset = 5;
+	X1 = 0, X2 = 0;
+	Y1 = 0, Y2 = 0;
+
+
 }
 
 void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
@@ -260,7 +284,7 @@ void ARoad::FixCrossing()
 						break;
 					}
 				}
-				
+				if (RoadConnections == 3) AccumulatedRotation *= -1;
 				UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
 				ChunksState[i][j] = RoadConnections;
 				Chunks[i][j]->SetWorldRotation(FRotator(0.0f, AccumulatedRotation, 0.0f));

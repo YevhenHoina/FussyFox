@@ -56,9 +56,9 @@ public:
 		UStaticMesh* PlaneTile;
 
 
-	int Size = 40;
-	UStaticMeshComponent* Chunks[40][40];
-	int ChunksState[40][40];
+	int Size = 60;
+	UStaticMeshComponent* Chunks[60][60];
+	int ChunksState[60][60];
 
 private:
 	void SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck);
