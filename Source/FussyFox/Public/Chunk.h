@@ -19,9 +19,10 @@ public:
 
 	virtual void BeginPlay() override;
 
+	int32 ID_MATERIAL = 0;
 
-		UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* grass;
+	UPROPERTY(EditAnyWhere, Category = "Roads")
+	UMaterialInterface* grass;
 
 	UPROPERTY(EditAnyWhere, Category = "Roads")
 		UMaterialInterface* road_end;
@@ -45,23 +46,11 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Mesh")
 		UStaticMesh* PlaneTile;
-private:
+
 	UMaterialInterface* GetPlaneMaterial(int id_material);
 
 public:
-	bool connection_left = false;
-	bool connection_right = false;
-	bool connection_up = false;
-	bool connection_down = false;
-
-	bool connections[4] = {
-		connection_left,
-		connection_right,
-		connection_up,
-		connection_down
-	};
-	void GenerateRandomCrossing(float seed);
-	void AdaptChunk(bool stateAround[4]);
+	
 };
 
 

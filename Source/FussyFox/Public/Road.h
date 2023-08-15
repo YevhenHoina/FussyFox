@@ -53,8 +53,8 @@ private:
 	int getRandomNumber();
 	void GenerateSurface();
 
-	void testFunction();
-	// void BuildLine(FVector2D FirstPoint, FVector2D SecondPoint);
+	void GenerateRoads();
+	void BuildLine(FVector2D FirstPoint, FVector2D SecondPoint);
 	// void FixCrossing();
 	
 };
