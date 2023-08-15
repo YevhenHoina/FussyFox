@@ -51,7 +51,7 @@ private:
 
 public:
 
-	void GenerateRandomCrossing(UStaticMeshComponent* tile);
+	void GenerateRandomCrossing();
 };
 
 

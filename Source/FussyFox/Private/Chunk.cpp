@@ -32,6 +32,7 @@ AChunk::AChunk()
 	GetStaticMeshComponent()->SetStaticMesh(PlaneTile);
 	GetStaticMeshComponent()->SetWorldScale3D(FVector::OneVector * 5.f);
 	GetStaticMeshComponent()->SetMaterial(0, grass);
+	GetStaticMeshComponent()->SetMobility(EComponentMobility::Movable);
 }
 
 void AChunk::BeginPlay()
@@ -51,16 +52,16 @@ UMaterialInterface* AChunk::GetPlaneMaterial(int id_material)
 	return ERROR_MATERIAL;
 }
 
-void AChunk::GenerateRandomCrossing(UStaticMeshComponent* tile)
+void AChunk::GenerateRandomCrossing()
 {
-	UMaterialInterface* material;
+	UMaterialInterface* material = grass;
 	int RandomNum = rand() % 100;
 	
 	if (RandomNum == 96) material = road_turn;
 	else if (RandomNum == 97) material = road_left_right;
 	else if (RandomNum == 98) material = road_end;
-	else material = road_crossing;
+	else if (RandomNum > 98) material = road_crossing;
 
-	tile->SetWorldRotation(FRotator(0, (rand() % 4) * 90, 0));
-	tile->SetMaterial(0, material);
+	GetStaticMeshComponent()->SetWorldRotation(FRotator(0, (rand() % 4) * 90, 0));
+	GetStaticMeshComponent()->SetMaterial(0, material);
 }

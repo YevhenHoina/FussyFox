@@ -24,7 +24,7 @@ void ARoad::BeginPlay()
 	Super::BeginPlay();
 	
 	
- 
+	
 	GenerateSurface();
 }
 
@@ -66,6 +66,7 @@ void ARoad::GenerateSurface()
 {	
 	FVector CurrentPosition;
 	
+	AChunk* Chunks[60][60];
 	UWorld* World = GetWorld();
 
 	for (int i = 0; i < Size; i++)
@@ -86,6 +87,15 @@ void ARoad::GenerateSurface()
 					UE_LOG(LogTemp, Warning, TEXT("Failed to spawn the Chunk actor."));
 				}
 			}
+		}
+	}
+
+
+	for (int i = BorderSize; i < Size - BorderSize; i++)
+	{
+		for (int j = BorderSize; j < Size - BorderSize; j++)
+		{
+			Chunks[i][j]->GenerateRandomCrossing();
 		}
 	}
 }
