@@ -2,8 +2,10 @@
 
 #pragma once
 
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
 #include "Road.generated.h"
 
 UCLASS()
@@ -29,44 +31,19 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* grass;
-
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* road_end;
-
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* road_turn;
-
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* road_left_right;
-
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* road_crossing;
-
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* road_straight;
-
-
-
-	UPROPERTY(EditAnyWhere, Category = "Roads")
-		UMaterialInterface* ERROR_MATERIAL;
-
-	UPROPERTY(EditAnywhere, Category = "Mesh")
-		UStaticMesh* PlaneTile;
+	
 
 
 	int Size = 60;
-	UStaticMeshComponent* Chunks[60][60];
-	int ChunksState[60][60];
+	
 
 private:
 	void SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck);
 	int getRandomNumber();
 	void GenerateSurface();
 
-	void GenerateRandomRoads();
-	void BuildLine(FVector2D FirstPoint, FVector2D SecondPoint);
-	void FixCrossing();
-	UMaterialInterface* GetPlaneMaterial(int id_material);
+	// void GenerateRandomRoads();
+	// void BuildLine(FVector2D FirstPoint, FVector2D SecondPoint);
+	// void FixCrossing();
+	
 };

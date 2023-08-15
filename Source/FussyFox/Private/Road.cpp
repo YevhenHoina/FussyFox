@@ -2,6 +2,7 @@
 
 
 #include "Road.h"
+#include "Chunk.h"
 #include "GenericPlatform/GenericPlatformMath.h"
 #include <random>
 #include "Engine/StaticMesh.h"
@@ -14,9 +15,7 @@ ARoad::ARoad()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	FString DefaultMeshAssetPath = TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Plane.Plane'");
-	PlaneTile = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *DefaultMeshAssetPath));
-	SetDefaultMesh(DefaultMeshAssetPath, PlaneTile);	
+	
 }
 
 // Called when the game starts or when spawned
@@ -24,11 +23,9 @@ void ARoad::BeginPlay()
 {
 	Super::BeginPlay();
 	
- 
+	
  
 	GenerateSurface();
-	FixCrossing();
-	
 }
 
 // Called every frame
@@ -68,57 +65,39 @@ int ARoad::getRandomNumber() {
 void ARoad::GenerateSurface()
 {	
 	FVector CurrentPosition;
+	AChunk* Chunks[60][60];
+	UWorld* World = GetWorld();
 
 	for (int i = 0; i < Size; i++)
 	{
 		for (int j = 0; j < Size; j++)
 		{
-			CurrentPosition = FVector(i * 500, j * 500, 0);
-			UStaticMeshComponent* NewRoadComponent = NewObject<UStaticMeshComponent>(this);
-			NewRoadComponent->SetStaticMesh(PlaneTile);
-			 
-			NewRoadComponent->SetRelativeLocation(CurrentPosition);
 			
-			NewRoadComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-			NewRoadComponent->SetWorldScale3D(FVector(5, 5, 1));
-			NewRoadComponent->RegisterComponent();
-			Chunks[i][j] = NewRoadComponent;
-			ChunksState[i][j] = 0;
-			NewRoadComponent->SetMaterial(0, GetPlaneMaterial(ChunksState[i][j]));
-			//DrawDebugLine(GetWorld(), FVector(i * 1000 + 500, j * 1000 + 500, 0), FVector(i * 1000 + 500, j * 1000 + 500, 2000), FColor::Red, true, 100);
-			
+
+			if (World)
+			{
+				CurrentPosition = FVector(i * 500, j * 500, 0);
+				// Spawn an instance of the AChunk actor class
+				Chunks[i][j] = World->SpawnActor<AChunk>(AChunk::StaticClass(), CurrentPosition, FRotator::ZeroRotator);
+
+				// Check if the actor was created successfully
+				if (!Chunks[i][j])
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Failed to spawn the Chunk actor."));
+				}
+			}
 		}
 	}
-	GenerateRandomRoads();
+	for (int i = 0; i < Size; i++)
+	{
+		for (int j = 0; j < Size; j++)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("At cordinates (%d, %d) is %s"), i, j, *Chunks[i][j]->Name);
+		}
+	}
 }
  
-void ARoad::GenerateRandomRoads()
-{
-	int X1 = 0, X2;
-	int Y1 = 0, Y2;
-	for (int i = 0; i <= 15; i ++)
-	{
-		X1 = rand() % 7, X2 = Size - (rand() % 3) - 2;
-		Y1 = Y1 + 2 + rand() % 3, Y2 = Y1;
-		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
-
-
-		X1 += rand() % 3;
-		if (X1 > 15) break;
-	}
-	X1 = 0, X2;
-	Y1 = 0, Y2;
-	for (int i = 0; i <= 15; i++)
-	{
-		Y1 = rand() % 7, Y2 = Size - (rand() % 3) - 2;
-		X1 = X1 + 2 + rand() % 3, X2 = X1;
-		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
-
-		Y1 += rand() % 3;
-		if (Y1 > 15) break;
-	}
-}
-
+/*
 void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
 {
 	int X1 = FirstPoint.X;
@@ -147,15 +126,10 @@ void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
 	}
 		
 
-	if (ChunksState[X1][Y1] == 0) {
-		Chunks[X1][Y1]->SetMaterial(0, road_end);
-		ChunksState[X1][Y1] = 1;
-	}
-	else {
-		Chunks[X1][Y1]->SetMaterial(0, road_crossing);
-		ChunksState[X1][Y1] = 4;
-	}
+	Chunks[X1][Y1]->SetMaterial(0, road_crossing);
+	ChunksState[X1][Y1] = 4;
 	Chunks[X1][Y1]->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.0f, 0.0f, Direction.Y) * FVector(0, 0, 90) + FVector(0, 0, -90)));
+
 	FVector ResultVector = FVector(FirstPoint.X, FirstPoint.Y, 0) - FVector(SecondPoint.X, SecondPoint.Y, 0);
 	for (int i = 1; i < ResultVector.Size(); i++)
 	{
@@ -179,16 +153,10 @@ void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
 
 	
 
-	if (ChunksState[X2][Y2] == 0) {
-		Chunks[X2][Y2]->SetMaterial(0, road_end);
-		Chunks[X2][Y2]->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.0f, 0.0f, Direction.Y) * FVector(0, 0, 90) + FVector(0, 0, 90)));
-		ChunksState[X2][Y2] = 1;
-	}
-	else {
-		Chunks[X2][Y2]->SetMaterial(0, road_crossing);
-		ChunksState[X2][Y2] = 4;
-		Chunks[X2][Y2]->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.0f, 0.0f, Direction.Y) * FVector(0, 0, 90) + FVector(0, 0, 90)));
-	}
+	
+	Chunks[X2][Y2]->SetMaterial(0, road_crossing);
+	ChunksState[X2][Y2] = 4;
+	Chunks[X2][Y2]->SetWorldRotation(FRotator::MakeFromEuler(FVector(0.0f, 0.0f, Direction.Y) * FVector(0, 0, 90) + FVector(0, 0, 90)));
 }
 
 UMaterialInterface* ARoad::GetPlaneMaterial(int id_material)
@@ -274,12 +242,28 @@ void ARoad::FixCrossing()
 						break;
 					}
 				}
+				ChunksState[i][j] = RoadConnections;
+				switch (RoadConnections)
+				{
+
+				case 2:
+					if (ChunksState[i - 1][j] && ChunksState[i + 1][j] ||
+						ChunksState[i][j - 1] && ChunksState[i][j + 1])
+						ChunksState[i][j] = 5;
+					break;
+				case 3:
+					AccumulatedRotation = ((ChunksState[i][j - 1] == 0) || (ChunksState[i][j - 1] == 0)) ? AccumulatedRotation * (-1): AccumulatedRotation;
+					break;
+				default:
+					break;
+				}
 				
 				UE_LOG(LogTemp, Warning, TEXT("RoadConection number %d"), RoadConnections);
-				ChunksState[i][j] = RoadConnections;
+				
 				Chunks[i][j]->SetWorldRotation(FRotator(0.0f, AccumulatedRotation, 0.0f));
 				Chunks[i][j]->SetMaterial(0, GetPlaneMaterial(ChunksState[i][j]));
 			}
 		}
 	}
 }
+*/
