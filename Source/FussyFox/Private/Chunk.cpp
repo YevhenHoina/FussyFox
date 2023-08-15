@@ -50,3 +50,17 @@ UMaterialInterface* AChunk::GetPlaneMaterial(int id_material)
 
 	return ERROR_MATERIAL;
 }
+
+void AChunk::GenerateRandomCrossing(UStaticMeshComponent* tile)
+{
+	UMaterialInterface* material;
+	int RandomNum = rand() % 100;
+	
+	if (RandomNum == 96) material = road_turn;
+	else if (RandomNum == 97) material = road_left_right;
+	else if (RandomNum == 98) material = road_end;
+	else material = road_crossing;
+
+	tile->SetWorldRotation(FRotator(0, (rand() % 4) * 90, 0));
+	tile->SetMaterial(0, material);
+}

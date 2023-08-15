@@ -35,7 +35,7 @@ public:
 
 
 	int Size = 60;
-	
+	AChunk* Chunks[60][60];
 
 private:
 	void SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck);

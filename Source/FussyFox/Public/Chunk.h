@@ -48,6 +48,10 @@ public:
 		UStaticMesh* PlaneTile;
 private:
 	UMaterialInterface* GetPlaneMaterial(int id_material);
+
+public:
+
+	void GenerateRandomCrossing(UStaticMeshComponent* tile);
 };
 
 
