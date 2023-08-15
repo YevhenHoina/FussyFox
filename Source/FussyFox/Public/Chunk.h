@@ -19,7 +19,6 @@ public:
 
 	virtual void BeginPlay() override;
 
-	FString Name = FString::Printf(TEXT("Bufalo %d"), rand() % 100);
 
 		UPROPERTY(EditAnyWhere, Category = "Roads")
 		UMaterialInterface* grass;
@@ -50,8 +49,19 @@ private:
 	UMaterialInterface* GetPlaneMaterial(int id_material);
 
 public:
+	bool connection_left = false;
+	bool connection_right = false;
+	bool connection_up = false;
+	bool connection_down = false;
 
-	void GenerateRandomCrossing();
+	bool connections[4] = {
+		connection_left,
+		connection_right,
+		connection_up,
+		connection_down
+	};
+	void GenerateRandomCrossing(float seed);
+	void AdaptChunk(bool stateAround[4]);
 };
 
 

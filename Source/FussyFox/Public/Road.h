@@ -5,7 +5,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-
+#include "Chunk.h"
 
 #include "Road.generated.h"
 
@@ -17,7 +17,7 @@ class FUSSYFOX_API ARoad : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ARoad();
-
+	AChunk* Chunks[60][60];
 
 
 	
@@ -30,7 +30,12 @@ protected:
 	UPROPERTY(EditAnyWhere)
 		UStaticMeshComponent* InitialMeshComponent;
 
-	UPROPERTY(EditAnyWhere)
+	
+
+	UPROPERTY(EditAnyWhere, Category = "Generation")
+		float seed = 25422002;
+
+	UPROPERTY(EditAnyWhere, Category = "Generation")
 		int BorderSize = 5;
  
 public:	
@@ -45,10 +50,10 @@ public:
 	
 
 private:
-	void SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck);
 	int getRandomNumber();
 	void GenerateSurface();
 
+	void testFunction();
 	// void BuildLine(FVector2D FirstPoint, FVector2D SecondPoint);
 	// void FixCrossing();
 	

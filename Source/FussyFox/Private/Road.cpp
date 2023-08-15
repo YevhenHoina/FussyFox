@@ -24,7 +24,7 @@ void ARoad::BeginPlay()
 	Super::BeginPlay();
 	
 	
-	
+	//testFunction();
 	GenerateSurface();
 }
 
@@ -33,20 +33,6 @@ void ARoad::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
-
-
-
-void ARoad::SetDefaultMesh(FString AssetPath, UStaticMesh* MeshToCheck)
-{
-	
-
-	MeshToCheck = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *AssetPath));
-
-	if (!MeshToCheck)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load the default mesh asset: %s"), *AssetPath);
-	}
 }
  
  
@@ -66,15 +52,13 @@ void ARoad::GenerateSurface()
 {	
 	FVector CurrentPosition;
 	
-	AChunk* Chunks[60][60];
 	UWorld* World = GetWorld();
 
+	//Generate surface of grass only
 	for (int i = 0; i < Size; i++)
 	{
 		for (int j = 0; j < Size; j++)
 		{
-			
-
 			if (World)
 			{
 				CurrentPosition = FVector(i * 500, j * 500, 0);
@@ -89,14 +73,32 @@ void ARoad::GenerateSurface()
 			}
 		}
 	}
-
-
-	for (int i = BorderSize; i < Size - BorderSize; i++)
-	{
-		for (int j = BorderSize; j < Size - BorderSize; j++)
-		{
-			Chunks[i][j]->GenerateRandomCrossing();
-		}
-	}
 }
  
+void ARoad::testFunction()
+{
+	FVector CurrentPosition;
+
+	UWorld* World = GetWorld();
+
+	for (int i = 0; i < Size; i++)
+	{
+		for (int j = 0; j < Size; j++)
+		{
+			if (World)
+			{
+				CurrentPosition = FVector(i * 500, j * 500, 0);
+				// Spawn an instance of the AChunk actor class
+				Chunks[i][j] = World->SpawnActor<AChunk>(AChunk::StaticClass(), CurrentPosition, FRotator::ZeroRotator);
+
+				// Check if the actor was created successfully
+				if (!Chunks[i][j])
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Failed to spawn the Chunk actor."));
+				}
+			}
+		}
+	}
+	bool arr[4] = { false, true, true, true };
+	Chunks[2][2]->AdaptChunk(arr);
+}
