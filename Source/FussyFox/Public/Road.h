@@ -13,41 +13,41 @@ UCLASS()
 class FUSSYFOX_API ARoad : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ARoad();
 	AChunk* Chunks[60][60];
 
 
-	
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
- 
- 
+
+
 	UPROPERTY(EditAnyWhere)
 		UStaticMeshComponent* InitialMeshComponent;
 
-	
+
 
 	UPROPERTY(EditAnyWhere, Category = "Generation")
 		float seed = 25422002;
 
 	UPROPERTY(EditAnyWhere, Category = "Generation")
 		int BorderSize = 5;
- 
-public:	
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
 
-	
+
+
 
 
 	int Size = 60;
-	
+
 
 private:
 	int getRandomNumber();
@@ -57,5 +57,5 @@ private:
 	void BuildLine(FVector2D FirstPoint, FVector2D SecondPoint);
 	void DestroyLine(FVector2D FirstPoint, FVector2D SecondPoint);
 	// void FixCrossing();
-	
+
 };

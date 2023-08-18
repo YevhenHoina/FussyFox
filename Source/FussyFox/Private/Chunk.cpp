@@ -37,7 +37,7 @@ AChunk::AChunk()
 
 void AChunk::BeginPlay()
 {
-	
+
 }
 
 UMaterialInterface* AChunk::GetPlaneMaterial(int id_material)
@@ -51,4 +51,3 @@ UMaterialInterface* AChunk::GetPlaneMaterial(int id_material)
 
 	return ERROR_MATERIAL;
 }
-

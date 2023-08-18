@@ -7,23 +7,23 @@
 #include <random>
 #include "Engine/StaticMesh.h"
 #include "Components/StaticMeshComponent.h"
- 
+
 
 // Sets default values
 ARoad::ARoad()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	
+
 }
 
 // Called when the game starts or when spawned
 void ARoad::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
+
+
 	//testFunction();
 	GenerateSurface();
 	GenerateRoads();
@@ -35,8 +35,8 @@ void ARoad::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
- 
- 
+
+
 
 int ARoad::getRandomNumber() {
 	int RandomNum = rand() % 100;
@@ -50,9 +50,9 @@ int ARoad::getRandomNumber() {
 }
 
 void ARoad::GenerateSurface()
-{	
+{
 	FVector CurrentPosition;
-	
+
 	UWorld* World = GetWorld();
 
 	//Generate surface of grass only
@@ -75,7 +75,7 @@ void ARoad::GenerateSurface()
 		}
 	}
 }
- 
+
 void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
 {
 	int X1 = FirstPoint.X;
@@ -133,7 +133,7 @@ void ARoad::DestroyLine(FVector2D FirstPoint, FVector2D SecondPoint)
 	int X2 = SecondPoint.X;
 	int Y2 = SecondPoint.Y;
 
-	//int X, Y; //NearPoints
+	int X, Y; //NearPoints
 
 	FVector2D Direction;
 	if (FirstPoint.X == SecondPoint.X)
@@ -169,6 +169,23 @@ void ARoad::DestroyLine(FVector2D FirstPoint, FVector2D SecondPoint)
 			Chunks[X1][Y1]->GetStaticMeshComponent()->SetWorldRotation(FRotator(0, 90 * Direction.X, 0));
 			Chunks[X1][Y1]->ID_MATERIAL = 66;
 		}
+		X = X1 + Direction.Y;
+		Y = Y1 + Direction.X;
+		if ((Chunks[X][Y])->ID_MATERIAL != 0)
+		{
+			Chunks[X][Y]->GetStaticMeshComponent()->SetMaterial(0, Chunks[X1][Y1]->GetPlaneMaterial(4));
+			Chunks[X][Y]->GetStaticMeshComponent()->SetWorldRotation(FRotator(0, 90 * Direction.X, 0));
+			Chunks[X][Y]->ID_MATERIAL = 4;
+		}
+
+		X = X1 - Direction.Y;
+		Y = Y1 - Direction.X;
+		if ((Chunks[X][Y])->ID_MATERIAL != 0)
+		{
+			Chunks[X][Y]->GetStaticMeshComponent()->SetMaterial(0, Chunks[X1][Y1]->GetPlaneMaterial(4));
+			Chunks[X][Y]->GetStaticMeshComponent()->SetWorldRotation(FRotator(0, 90 * Direction.X, 0));
+			Chunks[X][Y]->ID_MATERIAL = 4;
+		}
 	}
 }
 
@@ -179,7 +196,7 @@ void ARoad::GenerateRoads()
 	int Y1 = 0, Y2;
 
 	const int MAX_ROADS = 17; //never change it
-	const int MAX_BREAKS = 4; //never change it
+	const int MAX_BREAKS = 8; //never change it
 
 	for (int i = 0; i <= MAX_ROADS; i++)
 	{
@@ -195,14 +212,14 @@ void ARoad::GenerateRoads()
 
 
 
-		
+
 	}
 	X1 = 0, X2 = 0;
 	Y1 = 0, Y2 = 0;
 
-	
 
-	
+
+
 	for (int i = 0; i <= MAX_ROADS; i++)
 	{
 		Y1 = 2 + (rand() % 6), Y2 = Size - (rand() % 6) - 2;
@@ -212,20 +229,20 @@ void ARoad::GenerateRoads()
 		if (X2 > 59) break;
 		if (Y1 > 59) break;
 		if (Y2 > 59) break;
-		
+
 		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
 
 
-		
+
 	}
 	X1 = 0, X2 = 0;
 	Y1 = 0, Y2 = 0;
 
 
-	
+
 	for (int i = 0; i <= MAX_BREAKS; i++)
 	{
-		Y1 = (rand() % 30), Y2 = Size - (rand() % 30);
+		Y1 = (rand() % 54), Y2 = X1 + (rand() % 5);
 		X1 = X1 + 2 + rand() % 3, X2 = X1;
 
 		if (X1 > 59) break;
@@ -236,7 +253,7 @@ void ARoad::GenerateRoads()
 		DestroyLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
 
 
-		X1 += rand() % 12;
+		X1 += rand() % 6;
 
 		if (X1 > 50) break;
 	}
@@ -248,7 +265,7 @@ void ARoad::GenerateRoads()
 
 	for (int i = 0; i <= MAX_BREAKS; i++)
 	{
-		X1 = (rand() % 30), X2 = Size - (rand() % 30);
+		X1 = (rand() % 54), X2 = X1 + (rand() % 5);
 		Y1 = Y1 + 2 + rand() % 3, Y2 = Y1;
 
 		if (X1 > 59) break;
@@ -259,13 +276,12 @@ void ARoad::GenerateRoads()
 		DestroyLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
 
 
-		Y1 += rand() % 12;
+		Y1 += rand() % 6;
 
 		if (Y1 > 50) break;
 	}
 
 	X1 = 0, X2 = 0;
 	Y1 = 0, Y2 = 0;
-	
-}
 
+}

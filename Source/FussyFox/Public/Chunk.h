@@ -7,7 +7,7 @@
 #include "Chunk.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class FUSSYFOX_API AChunk : public AStaticMeshActor
@@ -22,7 +22,7 @@ public:
 	int32 ID_MATERIAL = 0;
 
 	UPROPERTY(EditAnyWhere, Category = "Roads")
-	UMaterialInterface* grass;
+		UMaterialInterface* grass;
 
 	UPROPERTY(EditAnyWhere, Category = "Roads")
 		UMaterialInterface* road_end;
@@ -50,8 +50,5 @@ public:
 	UMaterialInterface* GetPlaneMaterial(int id_material);
 
 public:
-	
+
 };
-
-
-
