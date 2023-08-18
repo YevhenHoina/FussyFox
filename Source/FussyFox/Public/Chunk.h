@@ -19,7 +19,11 @@ public:
 
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnyWhere, Category = "Debug")
 	int32 ID_MATERIAL = 0;
+
+	UPROPERTY(EditAnyWhere, Category = "Debug")
+	int Pose = 0b0000;
 
 	UPROPERTY(EditAnyWhere, Category = "Roads")
 		UMaterialInterface* grass;

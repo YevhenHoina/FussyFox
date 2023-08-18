@@ -26,7 +26,12 @@ void ARoad::BeginPlay()
 
 	//testFunction();
 	GenerateSurface();
+	/*BuildLine(FVector2D(1, 3), FVector2D(1, 11));
+	BuildLine(FVector2D(1, 4), FVector2D(5, 4));
+	BuildLine(FVector2D(5, 3), FVector2D(5, 11));
+	BuildLine(FVector2D(1, 10), FVector2D(5, 10));*/
 	GenerateRoads();
+	FixCrossing();
 }
 
 // Called every frame
@@ -97,12 +102,13 @@ void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
 		return;
 	}
 
-
-	Chunks[X1][Y1]->GetStaticMeshComponent()->SetMaterial(0, Chunks[X1][Y1]->GetPlaneMaterial(1));
+	X1 += Direction.X;
+	Y1 += Direction.Y;
+	Chunks[X1][Y1]->GetStaticMeshComponent()->SetMaterial(0, Chunks[X1][Y1]->GetPlaneMaterial(4));
 	Chunks[X1][Y1]->GetStaticMeshComponent()->SetWorldRotation(FRotator(0, -90 * Direction.X + 180, 0));
-	Chunks[X1][Y1]->ID_MATERIAL = 1;
+	Chunks[X1][Y1]->ID_MATERIAL = 4;
 	FVector ResultVector = FVector(FirstPoint.X, FirstPoint.Y, 0) - FVector(SecondPoint.X, SecondPoint.Y, 0);
-	for (int i = 0; i < ResultVector.Size2D() - 1; i++)
+	for (int i = 1; i < ResultVector.Size2D() - 1; i++)
 	{
 		X1 = i * Direction.X + Direction.X + FirstPoint.X;
 		Y1 = i * Direction.Y + Direction.Y + FirstPoint.Y;
@@ -121,9 +127,9 @@ void ARoad::BuildLine(FVector2D FirstPoint, FVector2D SecondPoint)
 			Chunks[X1][Y1]->ID_MATERIAL = 4;
 		}
 	}
-	Chunks[X2][Y2]->GetStaticMeshComponent()->SetMaterial(0, Chunks[X1][Y1]->GetPlaneMaterial(1));
-	Chunks[X2][Y2]->GetStaticMeshComponent()->SetWorldRotation(FRotator(0, -90 * Direction.X, 0));
-	Chunks[X2][Y2]->ID_MATERIAL = 1;
+	Chunks[X1][Y1]->GetStaticMeshComponent()->SetMaterial(0, Chunks[X1][Y1]->GetPlaneMaterial(4));
+	Chunks[X1][Y1]->GetStaticMeshComponent()->SetWorldRotation(FRotator(0, -90 * Direction.X, 0));
+	Chunks[X1][Y1]->ID_MATERIAL = 4;
 }
 
 void ARoad::DestroyLine(FVector2D FirstPoint, FVector2D SecondPoint)
@@ -165,9 +171,9 @@ void ARoad::DestroyLine(FVector2D FirstPoint, FVector2D SecondPoint)
 		}
 		else
 		{
-			Chunks[X1][Y1]->GetStaticMeshComponent()->SetMaterial(0, Chunks[X1][Y1]->GetPlaneMaterial(666));
+			Chunks[X1][Y1]->GetStaticMeshComponent()->SetMaterial(0, Chunks[X1][Y1]->GetPlaneMaterial(0));
 			Chunks[X1][Y1]->GetStaticMeshComponent()->SetWorldRotation(FRotator(0, 90 * Direction.X, 0));
-			Chunks[X1][Y1]->ID_MATERIAL = 66;
+			Chunks[X1][Y1]->ID_MATERIAL = 0;
 		}
 		X = X1 + Direction.Y;
 		Y = Y1 + Direction.X;
@@ -284,4 +290,95 @@ void ARoad::GenerateRoads()
 	X1 = 0, X2 = 0;
 	Y1 = 0, Y2 = 0;
 
+}
+
+void ARoad::FixCrossing()
+{
+	int Connections = 0;
+
+	//each byte represents a direction;
+	float Rotation = 0;
+	for (int i = 1; i < Size - 1; i++)
+	{
+		for (int j = 1; j < Size - 1; j++)
+		{
+			if (Chunks[i][j]->ID_MATERIAL != 0)
+			{
+				if (Chunks[i + 1][j]->ID_MATERIAL != 0) {
+					Connections += 1;
+					Chunks[i][j]->Pose += 0b1000;
+				}
+				if (Chunks[i][j + 1]->ID_MATERIAL != 0) {
+					Connections += 1;
+					Chunks[i][j]->Pose += 0b0100;
+				}
+				if (Chunks[i - 1][j]->ID_MATERIAL != 0) {
+					Connections += 1;
+					Chunks[i][j]->Pose += 0b0010;
+				}
+				if (Chunks[i][j - 1]->ID_MATERIAL != 0) {
+					Connections += 1;
+					Chunks[i][j]->Pose += 0b0001;
+				}
+				if (Connections == 1)
+				{
+					for (int position = 0; position < sizeof(int) * 8; ++position) {
+						if ((Chunks[i][j]->Pose & (1 << position)) != 0) {
+							Rotation = position * (-90);
+							break;
+						}
+					}
+				}
+				if (Connections == 2) 
+				{
+					//If this is straight connections than do straight road, but not a turn
+					if (((Chunks[i + 1][j]->ID_MATERIAL != 0) && (Chunks[i - 1][j]->ID_MATERIAL != 0))
+						||
+						((Chunks[i][j + 1]->ID_MATERIAL != 0) && (Chunks[i][j - 1]->ID_MATERIAL != 0)))
+					{
+						Connections = 5;
+						Chunks[i][j]->GetStaticMeshComponent()->SetMaterial(0, (Chunks[i][j]->GetPlaneMaterial(Connections)));
+						Chunks[i][j]->ID_MATERIAL = Connections;
+						Connections = 0;
+						Rotation = 0;
+						continue;
+					}
+					else
+					{
+
+						//This is bad
+						//I have no idea why thing is even working
+						//As if-else solution it might be the best actualy
+						if (Chunks[i][j]->Pose & 1)
+						{
+							Rotation = 90;
+						}
+						if (Chunks[i][j]->Pose >> 3 & 1)
+						{
+							Rotation -= 90;
+							if (Chunks[i][j]->Pose & 1) Rotation = 180;
+						}
+						
+					}
+
+
+				}
+				if (Connections == 3)
+				{
+					for (int position = 0; position < sizeof(int) * 8; ++position) {
+						if ((Chunks[i][j]->Pose & (1 << position)) == 0) {
+							Rotation = position * (-90);
+							break;
+						}
+					}
+				}
+				
+				Chunks[i][j]->GetStaticMeshComponent()->SetMaterial(0, (Chunks[i][j]->GetPlaneMaterial(Connections)));
+				Chunks[i][j]->ID_MATERIAL = Connections;
+				Chunks[i][j]->GetStaticMeshComponent()->SetWorldRotation(FRotator(0, Rotation, 0));
+				Connections = 0;
+				Rotation = 0;
+			}
+		}
+	}
 }

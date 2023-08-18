@@ -56,6 +56,6 @@ private:
 	void GenerateRoads();
 	void BuildLine(FVector2D FirstPoint, FVector2D SecondPoint);
 	void DestroyLine(FVector2D FirstPoint, FVector2D SecondPoint);
-	// void FixCrossing();
+	void FixCrossing();
 
 };
