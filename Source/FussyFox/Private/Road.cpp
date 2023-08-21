@@ -200,96 +200,60 @@ void ARoad::GenerateRoads()
 {
 	int X1 = 0, X2;
 	int Y1 = 0, Y2;
-
-	const int MAX_ROADS = 17; //never change it
-	const int MAX_BREAKS = 8; //never change it
-
-	for (int i = 0; i <= MAX_ROADS; i++)
+	for (int i = 0; i <= 17; i++)
 	{
-		X1 = 2 + (rand() % 6), X2 = Size - (rand() % 6) - 2;
-		Y1 = Y1 + 2 + rand() % 3, Y2 = Y1;
+		X1 = 2 + rand() % 8, X2 = Size - (rand() % 3) - 5;
+		Y1 = Y1 + 3 + rand() % 3, Y2 = Y1;
 
 		if (X1 > 59) break;
+		if (Y1 > 50) break;
 		if (X2 > 59) break;
-		if (Y1 > 59) break;
 		if (Y2 > 59) break;
 
 		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
 
 
-
-
+		X1 += rand() % 3;
 	}
-	X1 = 0, X2 = 0;
-	Y1 = 0, Y2 = 0;
-
-
-
-
-	for (int i = 0; i <= MAX_ROADS; i++)
+	X1 = 0, X2;
+	Y1 = 0, Y2;
+	for (int i = 0; i <= 17; i++)
 	{
-		Y1 = 2 + (rand() % 6), Y2 = Size - (rand() % 6) - 2;
-		X1 = X1 + 2 + rand() % 3, X2 = X1;
-
-		if (X1 > 59) break;
-		if (X2 > 59) break;
-		if (Y1 > 59) break;
-		if (Y2 > 59) break;
-
-		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
-
-
-
-	}
-	X1 = 0, X2 = 0;
-	Y1 = 0, Y2 = 0;
-
-
-
-	for (int i = 0; i <= MAX_BREAKS; i++)
-	{
-		Y1 = (rand() % 54), Y2 = X1 + (rand() % 5);
-		X1 = X1 + 2 + rand() % 3, X2 = X1;
-
-		if (X1 > 59) break;
-		if (X2 > 59) break;
-		if (Y1 > 59) break;
-		if (Y2 > 59) break;
-
-		DestroyLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
-
-
-		X1 += rand() % 6;
+		Y1 = 2 + rand() % 8, Y2 = Size - (rand() % 3) - 7;
+		X1 = X1 + 3 + rand() % 3, X2 = X1;
 
 		if (X1 > 50) break;
-	}
-	X1 = 0, X2 = 0;
-	Y1 = 0, Y2 = 0;
-
-
-
-
-	for (int i = 0; i <= MAX_BREAKS; i++)
-	{
-		X1 = (rand() % 54), X2 = X1 + (rand() % 5);
-		Y1 = Y1 + 2 + rand() % 3, Y2 = Y1;
-
-		if (X1 > 59) break;
-		if (X2 > 59) break;
 		if (Y1 > 59) break;
+		if (X2 > 59) break;
 		if (Y2 > 59) break;
 
-		DestroyLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
+		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
 
-
-		Y1 += rand() % 6;
-
-		if (Y1 > 50) break;
+		Y1 += rand() % 3;
 	}
 
-	X1 = 0, X2 = 0;
-	Y1 = 0, Y2 = 0;
+	for (int i = 0; i <= 4; i++)
+	{
+		for (int j = 0; j <= 4; j++)
+		{
+			X1 = 15 + 5 * i + (rand() % 10);
+			X2 = X1 + (rand() % 5);
+			Y1 = 20 * j + (rand() % 10);
 
+			if (X1 > 59) break;
+			if (Y1 > 50) break;
+			if (X2 > 59) break;
+
+			for (int k = 0; k <= 6; k++)
+			{
+
+				DestroyLine(FVector2D(X1, Y1 + k), FVector2D(X2, Y1 + k));
+			}
+			
+		}
+	}
+
+	
 }
 
 void ARoad::FixCrossing()
@@ -329,7 +293,7 @@ void ARoad::FixCrossing()
 						}
 					}
 				}
-				if (Connections == 2) 
+				if (Connections == 2)
 				{
 					//If this is straight connections than do straight road, but not a turn
 					if (((Chunks[i + 1][j]->ID_MATERIAL != 0) && (Chunks[i - 1][j]->ID_MATERIAL != 0))
@@ -358,7 +322,7 @@ void ARoad::FixCrossing()
 							Rotation -= 90;
 							if (Chunks[i][j]->Pose & 1) Rotation = 180;
 						}
-						
+
 					}
 
 
@@ -372,7 +336,7 @@ void ARoad::FixCrossing()
 						}
 					}
 				}
-				
+
 				Chunks[i][j]->GetStaticMeshComponent()->SetMaterial(0, (Chunks[i][j]->GetPlaneMaterial(Connections)));
 				Chunks[i][j]->ID_MATERIAL = Connections;
 				Chunks[i][j]->GetStaticMeshComponent()->SetWorldRotation(FRotator(0, Rotation, 0));
@@ -381,4 +345,9 @@ void ARoad::FixCrossing()
 			}
 		}
 	}
+}
+
+void ARoad::TickTackFix()
+{
+
 }

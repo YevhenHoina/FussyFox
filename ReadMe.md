@@ -31,3 +31,9 @@ git pull lfs https://github.com/YevhenHoina/FussyFox main
 ```console
 git clone https://github.com/YevhenHoina/FussyFox FussyFox
 ```
+
+## Project terminology
+
+### Tick Tack
+Tick Tack (тік так) - road which begins with road_end and ends with road_end and doest contain any crossings
+![Alt text](<tick tack.png>)
