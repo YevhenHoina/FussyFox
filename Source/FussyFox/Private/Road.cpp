@@ -26,12 +26,13 @@ void ARoad::BeginPlay()
 
 	//testFunction();
 	GenerateSurface();
-	/*BuildLine(FVector2D(1, 3), FVector2D(1, 11));
-	BuildLine(FVector2D(1, 4), FVector2D(5, 4));
-	BuildLine(FVector2D(5, 3), FVector2D(5, 11));
-	BuildLine(FVector2D(1, 10), FVector2D(5, 10));*/
+	/*BuildLine(FVector2D(1, 5), FVector2D(1, 9));
+	BuildLine(FVector2D(2, 4), FVector2D(5, 4));
+	BuildLine(FVector2D(5, 5), FVector2D(5, 9));
+	BuildLine(FVector2D(2, 17), FVector2D(15, 17));*/
 	GenerateRoads();
 	FixCrossing();
+	TickTackFix();
 }
 
 // Called every frame
@@ -176,7 +177,7 @@ void ARoad::DestroyLine(FVector2D FirstPoint, FVector2D SecondPoint)
 			Chunks[X1][Y1]->ID_MATERIAL = 0;
 		}
 		X = X1 + Direction.Y;
-		Y = Y1 + Direction.X;
+		Y = Y1 + Direction.X; 
 		if ((Chunks[X][Y])->ID_MATERIAL != 0)
 		{
 			Chunks[X][Y]->GetStaticMeshComponent()->SetMaterial(0, Chunks[X1][Y1]->GetPlaneMaterial(4));
@@ -205,10 +206,10 @@ void ARoad::GenerateRoads()
 		X1 = 2 + rand() % 8, X2 = Size - (rand() % 3) - 5;
 		Y1 = Y1 + 3 + rand() % 3, Y2 = Y1;
 
-		if (X1 > 59) break;
+		if (X1 > 58) break;
 		if (Y1 > 50) break;
-		if (X2 > 59) break;
-		if (Y2 > 59) break;
+		if (X2 > 58) break;
+		if (Y2 > 58) break;
 
 		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
 
@@ -223,9 +224,9 @@ void ARoad::GenerateRoads()
 		X1 = X1 + 3 + rand() % 3, X2 = X1;
 
 		if (X1 > 50) break;
-		if (Y1 > 59) break;
-		if (X2 > 59) break;
-		if (Y2 > 59) break;
+		if (Y1 > 58) break;
+		if (X2 > 58) break;
+		if (Y2 > 58) break;
 
 		BuildLine(FVector2D(X1, Y1), FVector2D(X2, Y2));
 
@@ -240,9 +241,9 @@ void ARoad::GenerateRoads()
 			X2 = X1 + (rand() % 5);
 			Y1 = 20 * j + (rand() % 10);
 
-			if (X1 > 59) break;
+			if (X1 > 58) break;
 			if (Y1 > 50) break;
-			if (X2 > 59) break;
+			if (X2 > 58) break;
 
 			for (int k = 0; k <= 6; k++)
 			{
@@ -252,8 +253,14 @@ void ARoad::GenerateRoads()
 			
 		}
 	}
-
-	
+	for (int i = 0; i <= 12; i++)
+	{
+		DestroyLine(FVector2D(0, i), FVector2D(12, i));
+		(FVector2D(i, 48), FVector2D(i, 59));
+		(FVector2D(i, 0), FVector2D(i, 16));
+		//DestroyLine(FVector2D(37, Size - i), FVector2D(59, Size - i));
+		DestroyLine(FVector2D(42, i), FVector2D(59, i));
+	}
 }
 
 void ARoad::FixCrossing()
@@ -268,22 +275,26 @@ void ARoad::FixCrossing()
 		{
 			if (Chunks[i][j]->ID_MATERIAL != 0)
 			{
-				if (Chunks[i + 1][j]->ID_MATERIAL != 0) {
-					Connections += 1;
-					Chunks[i][j]->Pose += 0b1000;
+				if (Chunks[i][j]->Pose == 0)
+				{
+					if (Chunks[i + 1][j]->ID_MATERIAL != 0) {
+						Connections += 1;
+						Chunks[i][j]->Pose += 0b1000;
+					}
+					if (Chunks[i][j + 1]->ID_MATERIAL != 0) {
+						Connections += 1;
+						Chunks[i][j]->Pose += 0b0100;
+					}
+					if (Chunks[i - 1][j]->ID_MATERIAL != 0) {
+						Connections += 1;
+						Chunks[i][j]->Pose += 0b0010;
+					}
+					if (Chunks[i][j - 1]->ID_MATERIAL != 0) {
+						Connections += 1;
+						Chunks[i][j]->Pose += 0b0001;
+					}
 				}
-				if (Chunks[i][j + 1]->ID_MATERIAL != 0) {
-					Connections += 1;
-					Chunks[i][j]->Pose += 0b0100;
-				}
-				if (Chunks[i - 1][j]->ID_MATERIAL != 0) {
-					Connections += 1;
-					Chunks[i][j]->Pose += 0b0010;
-				}
-				if (Chunks[i][j - 1]->ID_MATERIAL != 0) {
-					Connections += 1;
-					Chunks[i][j]->Pose += 0b0001;
-				}
+				
 				if (Connections == 1)
 				{
 					for (int position = 0; position < sizeof(int) * 8; ++position) {
@@ -349,5 +360,56 @@ void ARoad::FixCrossing()
 
 void ARoad::TickTackFix()
 {
+	FVector2D FirstPoint;
+	FVector2D SecondPoint;
+	int counter = 0;
+	for (int i = 0; i < Size; i++)
+	{
+		for (int j = 0; j < Size; j++)
+		{
+			if (counter == 1 && Chunks[i][j]->ID_MATERIAL == 1)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Point number %d found in (%d, %d)"), counter, i, j);
+				SecondPoint = FVector2D(i, j + 1);
+				DestroyLine(FirstPoint, SecondPoint);
+				UE_LOG(LogTemp, Warning, TEXT("Line destroyed from (%f, %f) to (%f, %f)"), counter, i, j);
+			}
+			/*if ((Chunks[i][j]->ID_MATERIAL == 2) || (Chunks[i][j]->ID_MATERIAL == 3) || (Chunks[i][j]->ID_MATERIAL == 4) || (Chunks[i][j]->ID_MATERIAL == 0))
+				counter = 0;*/
 
+			if (Chunks[i][j]->ID_MATERIAL == 1) {
+				counter++;
+				UE_LOG(LogTemp, Warning, TEXT("Point number %d found in (%d, %d)"), counter, i, j);
+				FirstPoint = FVector2D(i, j - 1);
+			}
+			
+		}
+		counter = 0;
+	}
+	FixCrossing();
+	for (int i = 0; i < Size; i++)
+	{
+		for (int j = 0; j < Size; j++)
+		{
+			if (counter == 1 && Chunks[i][j]->ID_MATERIAL == 1)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Point number %d found in (%d, %d)"), counter, j, i);
+				SecondPoint = FVector2D(j - 1, i + 1);
+				DestroyLine(FirstPoint, SecondPoint);
+				UE_LOG(LogTemp, Warning, TEXT("Line destroyed from (%f, %f) to (%f, %f)"), counter, j, i);
+			}
+			/*if ((Chunks[j][i]->ID_MATERIAL == 2) || (Chunks[j][i]->ID_MATERIAL == 3) || (Chunks[j][i]->ID_MATERIAL == 4) || (Chunks[j][i]->ID_MATERIAL == 0))
+				counter = 0;*/
+
+			if (Chunks[j][i]->ID_MATERIAL == 1)
+			{
+				counter++;
+				UE_LOG(LogTemp, Warning, TEXT("Point number %d found in (%d, %d)"), counter, j, i);
+				FirstPoint = FVector2D(j - 1, i - 1);
+			}
+
+		}
+		counter = 0;
+	}
+	FixCrossing();
 }
