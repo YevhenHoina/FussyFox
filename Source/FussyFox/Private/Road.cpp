@@ -6,7 +6,9 @@
 #include "GenericPlatform/GenericPlatformMath.h"
 #include <random>
 #include "Engine/StaticMesh.h"
+#include "DrawDebugHelpers.h"
 #include "Components/StaticMeshComponent.h"
+
 
 
 // Sets default values
@@ -32,7 +34,8 @@ void ARoad::BeginPlay()
 	BuildLine(FVector2D(2, 17), FVector2D(15, 17));*/
 	GenerateRoads();
 	FixCrossing();
-	TickTackFix();
+	test_building_generation();
+	//TickTackFix();
 }
 
 // Called every frame
@@ -71,6 +74,7 @@ void ARoad::GenerateSurface()
 				CurrentPosition = FVector(i * 500, j * 500, 0);
 				// Spawn an instance of the AChunk actor class
 				Chunks[i][j] = World->SpawnActor<AChunk>(AChunk::StaticClass(), CurrentPosition, FRotator::ZeroRotator);
+				DrawDebugLine(GetWorld(), FVector(i * 500 + 250, j * 500 + 250, 0), FVector(i * 500 + 250, j * 500 + 250, 1000), FColor::Red, false, 1000, 0, 10);
 
 				// Check if the actor was created successfully
 				if (!Chunks[i][j])
@@ -358,6 +362,7 @@ void ARoad::FixCrossing()
 	}
 }
 
+// this functions sucks
 void ARoad::TickTackFix()
 {
 	FVector2D FirstPoint;
@@ -412,4 +417,9 @@ void ARoad::TickTackFix()
 		counter = 0;
 	}
 	FixCrossing();
+}
+
+void ARoad::test_building_generation()
+{
+
 }
