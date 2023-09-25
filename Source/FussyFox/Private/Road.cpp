@@ -422,4 +422,36 @@ void ARoad::TickTackFix()
 void ARoad::test_building_generation()
 {
 
+	int32 RandomNumber;
+	FString MeshPath;
+	for (int i = 10; i < Size - 10; i++)
+	{
+		for (int j = 10; j < Size - 10; j++)
+		{
+			if (Chunks[i][j]->ID_MATERIAL == 0)
+			{
+				UStaticMeshComponent* new_Building = DuplicateObject(Building, this);
+				new_Building->RegisterComponent();
+				//Building->SetWorldTransform(FTransform(FQuat(), FVector(2, 2, 4), FVector::ZeroVector));
+				new_Building->SetWorldLocation(FVector(i * 500, j * 500, 100));
+				new_Building->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+				new_Building->SetWorldScale3D(FVector(1.6, 1.6, (2 + (rand()) % 6)));
+				if ((rand() % 5) == 1)
+				{
+					RandomNumber = FMath::RandRange(1, 4); // Generate a random number between 1 and 4
+					MeshPath = FString::Printf(TEXT("/Script/Engine.StaticMesh'/Game/Assets/LevelPrototyping/Meshes/SM_Pine_Tree_1.SM_Pine_Tree_%d'"), RandomNumber);
+					new_Building->SetStaticMesh(LoadObject<UStaticMesh>(nullptr, *MeshPath));
+					new_Building->SetWorldScale3D(FVector(1, 1, 1));
+				}
+				if ((rand() % 5) == 2)
+				{
+					RandomNumber = FMath::RandRange(1, 4); // Generate a random number between 1 and 4
+					MeshPath = FString::Printf(TEXT("/Script/Foliage.FoliageType_InstancedStaticMesh'/Game/Assets/LevelPrototyping/Meshes/SM_Common_Tree_1_FoliageType.SM_Common_Tree_%d_FoliageType'"), RandomNumber);
+					new_Building->SetStaticMesh(LoadObject<UStaticMesh>(nullptr, *MeshPath));
+					new_Building->SetWorldScale3D(FVector(1, 1, 1));
+				}
+				UE_LOG(LogTemp, Warning, TEXT("Launched %d %d"), i, j);
+			}
+		}
+	}
 }

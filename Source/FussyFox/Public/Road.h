@@ -30,7 +30,7 @@ protected:
 	UPROPERTY(EditAnyWhere)
 		UStaticMeshComponent* InitialMeshComponent;
 
-
+		
 
 	UPROPERTY(EditAnyWhere, Category = "Generation")
 		float seed = 25422002;
@@ -48,6 +48,8 @@ public:
 
 	int Size = 60;
 
+	UPROPERTY(EditAnyWhere, Category = "Debug")
+	UStaticMeshComponent* Building;
 
 private:
 	int getRandomNumber();

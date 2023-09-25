@@ -1,3 +1,6 @@
+
+![World exaple](Screenshots/Screenshot 2023-09-25 192409.png)
+
 # Instalation
 
 To install this shit, you need to setup yout git repository correctly
