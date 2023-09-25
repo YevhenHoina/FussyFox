@@ -1,5 +1,5 @@
 
-![World exaple](Screenshots/Screenshot 2023-09-25 192409.png)
+![World exaple](<Screenshots/Screenshot 2023-09-25 192409.png>)
 
 # Instalation
 
