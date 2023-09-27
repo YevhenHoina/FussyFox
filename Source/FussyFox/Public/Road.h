@@ -49,10 +49,13 @@ public:
 	int Size = 60;
 
 	UPROPERTY(EditAnyWhere, Category = "Debug")
+	bool ChunksShown = false;
+	UPROPERTY(EditAnyWhere, Category = "Debug")
 	UStaticMeshComponent* Building;
 
 private:
 	int getRandomNumber();
+	void ShowChunks(bool show);
 	void GenerateSurface();
 
 	void GenerateRoads();

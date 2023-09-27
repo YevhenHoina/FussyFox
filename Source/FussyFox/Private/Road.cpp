@@ -27,6 +27,7 @@ void ARoad::BeginPlay()
 
 
 	//testFunction();
+	ShowChunks(ChunksShown);
 	GenerateSurface();
 	/*BuildLine(FVector2D(1, 5), FVector2D(1, 9));
 	BuildLine(FVector2D(2, 4), FVector2D(5, 4));
@@ -74,8 +75,6 @@ void ARoad::GenerateSurface()
 				CurrentPosition = FVector(i * 500, j * 500, 0);
 				// Spawn an instance of the AChunk actor class
 				Chunks[i][j] = World->SpawnActor<AChunk>(AChunk::StaticClass(), CurrentPosition, FRotator::ZeroRotator);
-				DrawDebugLine(GetWorld(), FVector(i * 500 + 250, j * 500 + 250, 0), FVector(i * 500 + 250, j * 500 + 250, 1000), FColor::Red, false, 1000, 0, 10);
-
 				// Check if the actor was created successfully
 				if (!Chunks[i][j])
 				{
@@ -452,6 +451,15 @@ void ARoad::test_building_generation()
 				}
 				UE_LOG(LogTemp, Warning, TEXT("Launched %d %d"), i, j);
 			}
+		}
+	}
+}
+
+void ARoad::ShowChunks(bool show) {
+	for (int i = 0; i <= Size; i++)
+	{
+		for (int j = 0; j <= Size; j++) {
+			DrawDebugLine(GetWorld(), FVector(i * 500 - 250, j * 500 - 250, 0), FVector(i * 500 - 250, j * 500 - 250, 1000), FColor::Red, false, 1000, 0, 10);
 		}
 	}
 }
